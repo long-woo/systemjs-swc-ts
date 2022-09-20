@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+		"outDir": "dist",
+		"declaration": true,
+    "declarationDir": "dist/types",
+		"sourceMap": true,
+		"declarationMap": true,
+		"module": "ESNext",
+		"target": "ES5",
+		"moduleResolution": "Node",
+		"allowSyntheticDefaultImports": true,
+		"noImplicitAny": true,
+		"noImplicitThis": true,
+		"strict": true,
+		"strictFunctionTypes": true,
+		"importHelpers": true,
+		"downlevelIteration": true,
+		"alwaysStrict": true,
+		"noUnusedLocals": true,
+		"noUnusedParameters": true,
+		"esModuleInterop": true,
+  },
+  "exclude": ["node_modules"]
+}
