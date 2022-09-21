@@ -1,27 +1,59 @@
-import initSwc, { transformSync } from '@swc/wasm-web';
-import system from 'systemjs';
+import initSwcWeb, { transformSync } from "@swc/wasm-web";
 
-await initSwc();
+let initialized = false;
+const initSwc = async () => {
+  if (initialized) return;
+  console.log("swc init");
+  await initSwcWeb();
+  initialized = true;
+  console.log("swc end");
+};
 
-const systemJSPrototype = system.constructor.prototype;
+const _global = (typeof self !== "undefined" ? self : global) as any;
+const systemJSPrototype = _global.System.constructor.prototype;
+const jsonCssContentType = /^(application\/json|application\/|text\/css)(;|$)/;
+const registerRegEx =
+  /^\s*(\/\*[^\\*]*(\*(?!\/)[^\\*]*)*\*\/|\s*\/\/[^\n]*)*\s*System\s*\.\s*register\s*\(\s*(\[[^\]]*\])\s*,\s*\(?function\s*\(\s*([^\\),\s]+\s*(,\s*([^\\),\s]+)\s*)?\s*)?\)/;
 
-systemJSPrototype.shouldFetch = function () {
+systemJSPrototype.shouldFetch = function (url: string) {
+  console.log("url", url);
   return true;
 };
 
-systemJSPrototype.fetch = async (url: string, options) => {
+systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
+  console.log("systemJSPrototype.fetch", url);
   const res = await fetch(url, options);
 
-  if (!res.ok) return res;
+  if (!res.ok || jsonCssContentType.test(res.headers.get("content-type") ?? ""))
+    return res;
+  const source = await res.text();
 
-  if (res.url.endsWith('.ts')) {
-    const source = await res.text();
-    const {code , map } = transformSync(source)
-  
-    return new Response(new Blob([`${code}\n${map}`], { type: 'application/javascript'}))
-  }
+  await initSwc();
 
-  return res
-}
+  if (registerRegEx.test(source))
+    return new Response(new Blob([source], { type: "application/javascript" }));
 
-
+  const { code } = transformSync(source, {
+    jsc: {
+      parser: {
+        syntax: "typescript",
+        tsx: false,
+      },
+      target: "es5",
+      loose: false,
+      minify: {
+        compress: false,
+        mangle: false,
+      },
+    },
+    module: {
+      // @ts-ignore
+      type: "systemjs",
+    },
+    minify: false,
+    isModule: true,
+    sourceMaps: "inline",
+  });
+  console.log("code", code);
+  return new Response(new Blob([code], { type: "application/javascript" }));
+};

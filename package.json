@@ -1,20 +1,42 @@
 {
   "name": "systemjs-swc-ts",
+  "displayName": "systemjs-swc-ts",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Systemjs supports loading TypeScript.",
+  "main": "dist/systemjs-swc-ts.umd.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "rollup -c"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": [
+    "systemjs",
+    "typescript",
+    "babel",
+    "swc",
+    "plugin"
+  ],
+  "author": {
+    "name": "long.woo",
+    "email": "longwunet@outlook.com",
+    "url": "https://longwoo.me"
+  },
+  "files": [
+    "dist"
+  ],
   "license": "ISC",
   "devDependencies": {
     "@longwoo/eslint-config-typescript-prettier": "^1.0.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^14.1.0",
     "@types/node": "^18.7.18",
+    "@types/systemjs": "^6.1.1",
     "eslint": "^8.23.1",
     "prettier": "^2.7.1",
+    "rollup": "^2.79.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.34.0",
     "systemjs": "^6.12.6",
+    "terser": "^5.15.0",
+    "tslib": "^2.4.0",
     "typescript": "^4.8.3"
   },
   "peerDependencies": {
@@ -22,5 +44,10 @@
   },
   "dependencies": {
     "@swc/wasm-web": "^1.3.2"
+  },
+  "exports": {
+    ".": {
+      "require": "./dist/systemjs-swc-ts.umd.js"
+    }
   }
 }
