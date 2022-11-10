@@ -13,7 +13,7 @@ const _global = (typeof self !== "undefined" ? self : global) as any;
 const systemJSPrototype = _global.System.constructor.prototype;
 const jsonCssContentType = /^(application\/json|application\/|text\/css)(;|$)/;
 const registerRegEx =
-  /^\s*(\/\*[^\\*]*(\*(?!\/)[^\\*]*)*\*\/|\s*\/\/[^\n]*)*\s*System\s*\.\s*register\s*\(\s*(\[[^\]]*\])\s*,\s*\(?function\s*\(\s*([^\\),\s]+\s*(,\s*([^\\),\s]+)\s*)?\s*)?\)/;
+  /\s*(\/\*[^\\*]*(\*(?!\/)[^\\*]*)*\*\/|\s*\/\/[^\n]*)*\s*System\s*\.\s*register\s*\(\s*(\[[^\]]*\])\s*,\s*\(?function\s*\(\s*([^\\),\s]+\s*(,\s*([^\\),\s]+)\s*)?\s*)?\)/;
 
 systemJSPrototype.shouldFetch = function (url: string) {
   console.log("url", url);
@@ -37,20 +37,13 @@ systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
     jsc: {
       parser: {
         syntax: "typescript",
-        tsx: false,
+        tsx: true,
       },
       target: "es5",
-      loose: false,
-      minify: {
-        compress: false,
-        mangle: false,
-      },
     },
     module: {
-      // @ts-ignore
       type: "systemjs",
     },
-    minify: false,
     isModule: true,
     sourceMaps: "inline",
   });
