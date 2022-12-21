@@ -3,7 +3,7 @@
     "baseUrl": ".",
 		"outDir": "dist",
 		"declaration": true,
-    "declarationDir": "dist/types",
+    "declarationDir": "types",
 		"sourceMap": true,
 		"declarationMap": true,
 		"module": "ESNext",

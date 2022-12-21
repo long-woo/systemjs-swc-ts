@@ -1,9 +1,9 @@
+import { readFileSync } from 'node:fs'
+
 import resolve from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
-import { terser } from "rollup-plugin-terser";
-import typescript from "rollup-plugin-typescript2";
-
-import pkg from "./package.json";
+import terser from "@rollup/plugin-terser";
+import typescript from '@rollup/plugin-typescript'
 
 /**
  * 文件头说明
@@ -40,7 +40,7 @@ const buildFormat = (fileName) => ({
  * format 编译文件类型
  * mode 编译环境
  */
-const getConfig = ({ outFile, format, mode }) => {
+const getConfig = ({ outFile, format, mode }, pkg) => {
   const isProduction = mode === "production";
 
   const version = pkg.version;
@@ -63,12 +63,7 @@ const getConfig = ({ outFile, format, mode }) => {
       exports: "auto",
     },
     plugins: [
-      typescript({
-        exclude: "node_modules/**",
-        // eslint-disable-next-line no-undef
-        typescript: require("typescript"),
-        useTsconfigDeclarationDir: true,
-      }),
+      typescript(),
       resolve(),
       json(),
       isProduction &&
@@ -83,8 +78,10 @@ const getConfig = ({ outFile, format, mode }) => {
 };
 
 const build = () => {
+  const pkg = JSON.parse(readFileSync(`./package.json`))
   const format = buildFormat(pkg.displayName);
-  return Object.keys(format).map((key) => getConfig(format[key]));
+
+  return Object.keys(format).map((key) => getConfig(format[key], pkg));
 };
 
 const buildConfig = build();
