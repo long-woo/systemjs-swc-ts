@@ -10,25 +10,30 @@ const initSwc = async () => {
 };
 
 const _global = (typeof self !== "undefined" ? self : global) as any;
+
 const systemJSPrototype = _global.System.constructor.prototype;
-const jsonCssContentType = /^(application\/json|application\/|text\/css)(;|$)/;
+const jsonCssWasmContentType =
+  /^(application\/json|application\/wasm|text\/css)(;|$)/;
 const registerRegEx =
   /\s*(\/\*[^\\*]*(\*(?!\/)[^\\*]*)*\*\/|\s*\/\/[^\n]*)*\s*System\s*\.\s*register\s*\(\s*(\[[^\]]*\])\s*,\s*\(?function\s*\(\s*([^\\),\s]+\s*(,\s*([^\\),\s]+)\s*)?\s*)?\)/;
 
-systemJSPrototype.shouldFetch = function (url: string) {
-  console.log("url", url);
+systemJSPrototype.shouldFetch = function () {
+  // console.log("url", url);
   return true;
 };
 
 systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
   console.log("systemJSPrototype.fetch", url);
+  await initSwc();
   const res = await fetch(url, options);
 
-  if (!res.ok || jsonCssContentType.test(res.headers.get("content-type") ?? ""))
+  if (
+    !res.ok ||
+    jsonCssWasmContentType.test(res.headers.get("content-type") ?? "")
+  )
     return res;
-  const source = await res.text();
 
-  await initSwc();
+  const source = await res.text();
 
   if (registerRegEx.test(source))
     return new Response(new Blob([source], { type: "application/javascript" }));
@@ -47,6 +52,6 @@ systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
     isModule: true,
     sourceMaps: "inline",
   });
-  console.log("code", code);
+
   return new Response(new Blob([code], { type: "application/javascript" }));
 };
