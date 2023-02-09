@@ -1,9 +1,9 @@
-import { readFileSync } from 'node:fs'
+import { readFileSync } from "node:fs";
 
 import resolve from "@rollup/plugin-node-resolve";
 import json from "@rollup/plugin-json";
 import terser from "@rollup/plugin-terser";
-import typescript from '@rollup/plugin-typescript'
+import typescript from "@rollup/plugin-typescript";
 
 /**
  * 文件头说明
@@ -61,6 +61,7 @@ const getConfig = ({ outFile, format, mode }, pkg) => {
       format,
       name: "SytemJSSWCTS",
       exports: "auto",
+      sourcemap: true,
     },
     plugins: [
       typescript(),
@@ -78,7 +79,7 @@ const getConfig = ({ outFile, format, mode }, pkg) => {
 };
 
 const build = () => {
-  const pkg = JSON.parse(readFileSync(`./package.json`))
+  const pkg = JSON.parse(readFileSync(`./package.json`));
   const format = buildFormat(pkg.displayName);
 
   return Object.keys(format).map((key) => getConfig(format[key], pkg));
