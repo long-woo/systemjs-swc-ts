@@ -22,8 +22,9 @@ systemJSPrototype.shouldFetch = function () {
   return true;
 };
 
+// const fetch = systemJSPrototype.fetch;
+
 systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
-  console.log("systemJSPrototype.fetch", url);
   await initSwc();
   const res = await fetch(url, options);
 
@@ -54,4 +55,30 @@ systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
   });
 
   return new Response(new Blob([code], { type: "application/javascript" }));
+  // return new Promise((resolve, reject) => {
+  //   transform(source, {
+  //     filename: url,
+  //     jsc: {
+  //       parser: {
+  //         syntax: "typescript",
+  //         tsx: true,
+  //       },
+  //     },
+  //     module: {
+  //       type: "systemjs",
+  //     },
+  //     isModule: true,
+  //     sourceMaps: "inline",
+  //   })
+  //     .then((output) => {
+  //       resolve(
+  //         new Response(
+  //           new Blob([output.code], { type: "application/javascript" })
+  //         )
+  //       );
+  //     })
+  //     .catch((_) => {
+  //       reject(`ERROR: ${_}`);
+  //     });
+  // });
 };
