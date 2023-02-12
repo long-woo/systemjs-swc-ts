@@ -15,14 +15,14 @@ const systemJSPrototype = _global.System.constructor.prototype;
 const jsonCssWasmContentType =
   /^(application\/json|application\/wasm|text\/css)(;|$)/;
 const registerRegEx =
-  /\s*(\/\*[^\\*]*(\*(?!\/)[^\\*]*)*\*\/|\s*\/\/[^\n]*)*\s*System\s*\.\s*register\s*\(\s*(\[[^\]]*\])\s*,\s*\(?function\s*\(\s*([^\\),\s]+\s*(,\s*([^\\),\s]+)\s*)?\s*)?\)/;
+  /System\s*\.\s*register\s*\(\s*(\[[^\]]*\])\s*,\s*\(?function\s*\(\s*([^\\),\s]+\s*(,\s*([^\\),\s]+)\s*)?\s*)?\)/;
 
 systemJSPrototype.shouldFetch = function () {
   // console.log("url", url);
   return true;
 };
 
-// const fetch = systemJSPrototype.fetch;
+const fetch = systemJSPrototype.fetch;
 
 systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
   await initSwc();
@@ -45,7 +45,7 @@ systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
         syntax: "typescript",
         tsx: true,
       },
-      target: "es5",
+      target: "es2020",
     },
     module: {
       type: "systemjs",
@@ -55,30 +55,4 @@ systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
   });
 
   return new Response(new Blob([code], { type: "application/javascript" }));
-  // return new Promise((resolve, reject) => {
-  //   transform(source, {
-  //     filename: url,
-  //     jsc: {
-  //       parser: {
-  //         syntax: "typescript",
-  //         tsx: true,
-  //       },
-  //     },
-  //     module: {
-  //       type: "systemjs",
-  //     },
-  //     isModule: true,
-  //     sourceMaps: "inline",
-  //   })
-  //     .then((output) => {
-  //       resolve(
-  //         new Response(
-  //           new Blob([output.code], { type: "application/javascript" })
-  //         )
-  //       );
-  //     })
-  //     .catch((_) => {
-  //       reject(`ERROR: ${_}`);
-  //     });
-  // });
 };
