@@ -22,7 +22,7 @@ systemJSPrototype.shouldFetch = function () {
   return true;
 };
 
-const fetch = systemJSPrototype.fetch;
+// const fetch = systemJSPrototype.fetch;
 
 systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
   await initSwc();
@@ -54,5 +54,8 @@ systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
     sourceMaps: "inline",
   });
 
+  if (url === "http://localhost:10011/workbench/navbar/src/main.ts") {
+    console.log(code);
+  }
   return new Response(new Blob([code], { type: "application/javascript" }));
 };
