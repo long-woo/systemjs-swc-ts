@@ -18,7 +18,6 @@ const registerRegEx =
   /System\s*\.\s*register\s*\(\s*(\[[^\]]*\])\s*,\s*\(?function\s*\(\s*([^\\),\s]+\s*(,\s*([^\\),\s]+)\s*)?\s*)?\)/;
 
 systemJSPrototype.shouldFetch = function () {
-  // console.log("url", url);
   return true;
 };
 
@@ -54,7 +53,12 @@ systemJSPrototype.fetch = async (url: string, options: RequestInit) => {
     sourceMaps: "inline",
   });
 
-  if (url === "http://localhost:10011/workbench/navbar/src/main.ts") {
+  if (
+    [
+      "http://localhost:10011/workbench/navbar/src/main.ts",
+      "http://localhost:10011/workbench/navbar/node_modules/.vite/deps/vue.js?v=1ed1d076",
+    ].includes(url)
+  ) {
     console.log(code);
   }
   return new Response(new Blob([code], { type: "application/javascript" }));
